@@ -49,7 +49,7 @@ const Chat = () => {
 
   useEffect(() => {
     socket.on("recieveMessage", (message) => {
-      fetchMessages();
+      setMessages((prevMessages) => [...prevMessages, message]);
     });
   }, [socket]);
 
