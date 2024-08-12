@@ -40,7 +40,10 @@ const Chat = () => {
   const params = useParams();
   useEffect(() => {
     const chatBox = document.getElementById("chat-box");
-    chatBox.scrollTop = chatBox.scrollHeight;
+    setTimeout(() => {
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }, 500);
+ 
   }, [messages]);
 
   useEffect(() => {
@@ -79,6 +82,7 @@ const Chat = () => {
       receiver: params.id,
     };
     socket.emit("message", message);
+    setNewMessage("");
   };
 
   return (
@@ -94,8 +98,9 @@ const Chat = () => {
         className="chat-box"
         style={{
           overflowY: "auto",
-          height: "100vh",
+          height: "89vh",
           borderRadius: "10px",
+          paddingBottom:'5rem',
           background: "linear-gradient(to bottom, #ff99ff, #ffff99)",
         }}
       >
