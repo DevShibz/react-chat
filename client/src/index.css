@@ -1,0 +1,79 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* @media (min-width: 1920px) {
+  .container {
+    min-width: 1920px;
+    width: 100%;
+  }
+}
+
+@media (min-width: 1440px) {
+  .container {
+    min-width: 1440px;
+    width: 100%;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container {
+    min-width: 1280px;
+    width: 100%;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    min-width: 1024px;
+    width: 100%;
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    min-width: 768px;
+    width: 100%;
+  }
+}
+
+@media (min-width: 640px) {
+  .container {
+    min-width: 640px;
+    width: 100%;
+  }
+}
+
+@media (min-width: 320px) {
+  .container {
+    min-width: 320px;
+    width: 100%;
+  }
+}
+
+.flex_row {
+  display: flex;
+  flex-direction: row;
+}
+
+.flex_col {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex_center {
+  display: flex;
+  justify-content: center;
+
+}
+
+.flex_between {
+  display: flex;
+  justify-content: space-between;
+} */
+
+
+
+
