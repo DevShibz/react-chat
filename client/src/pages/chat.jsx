@@ -135,7 +135,7 @@ const Chat = () => {
               alignItems: "center",
               padding: "10px",
               borderRadius: "10px",
-              backgroundColor: message.type == "user" ? "white" : "red",
+              backgroundColor: message.sender === decodeJWT().userId ? "white" : "red",
             }}
           >
             <div className="profile-badge" style={{ marginRight: "10px" }}>
