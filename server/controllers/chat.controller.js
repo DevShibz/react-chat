@@ -2,7 +2,6 @@ const Chat = require('../models/chat.model');
 const User = require('../models/user.model');
 const Room = require('../models/room.model');
 const { io } = require('./socket.controller');
-
 exports.getRecentChats = async (req, res) => {
   try{
     const chats = await Chat.find({ room: req.body.roomId })
@@ -96,30 +95,16 @@ exports.getAllFriendsByRoomId = async (req, res) => {
 }
 
 
-exports.sendMessageToRoom = async (req, res) => {
+exports.sendMessageToRoom = async (data) => {
   try {
-    const { room, message } = req.body;
-
-    const chat = await Chat.create({
-      room: room,
-      type: 'text',
-      message,
-      sender: req.body.sender,
-      receiver: req.body.receiver
-    });
-    
-    io.emit('message', chat);
-
-
-    res.status(200).json({
-      success: true,
-      chat
-    });
+    await Chat.create(data);
+    global.io.emit('recieveMessage', data);
+    return;
   } catch (err) {
-    res.status(500).json({
+    return {
       success: false,
       error: err.message
-    });
+    }
   }
 };
 
