@@ -1,6 +1,6 @@
 import LoginForm from '../components/LoginForm';
 import RegistrationForm from '../components/RegistrationForm';
-import Chat from '../pages/chat';
+import ChatScreen from '../pages/chat';
 import ChatDashboard from '../components/ChatDashboard';
 import React, { useState } from "react";
 const routes = (isLoggedIn) => [
@@ -18,7 +18,7 @@ const routes = (isLoggedIn) => [
   },
   {
     path:'chat/:id',
-    element: <Chat></Chat>
+    element: <ChatScreen></ChatScreen>
   }
 ];
 
