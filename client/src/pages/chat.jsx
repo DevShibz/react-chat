@@ -74,9 +74,16 @@ const ChatScreen = () => {
     const modal = document.createElement("div");
     modal.className = "fixed top-0 left-0 w-full h-full bg-black bg-opacity-50";
     modal.innerHTML = `
-      <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-      <div class="bg-white rounded-lg">
-        <img src=${image} alt="uploaded" class="w-64 h-64 rounded-lg" />
+      <div class="absolute top-0 left-0 w-full h-full flex items-center justify-center">
+      <div class="bg-transparent rounded-lg p-4">
+        <img src=${image} alt="uploaded" class="w-full h-full rounded-lg" />
+        <div class="flex justify-end mt-2">
+        <a href=${image} download>
+          <button class="bg-blue-500 hover:bg-blue-700 text-white py-1 px-2 rounded-md">
+          <i class="fa fa-download"></i>
+          </button>
+        </a>
+        </div>
       </div>
       </div>
     `;
