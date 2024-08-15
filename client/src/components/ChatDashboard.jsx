@@ -1,27 +1,36 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { io } from "socket.io-client";
 
+const socket = io.connect("http://localhost:3000");
 const ChatDashboard = () => {
   const [recentChats, setRecentChats] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
-  const navigate=useNavigate()
+  const navigate = useNavigate();
   useEffect(() => {
-    const fetchRecentChats = async () => {
-      try {
-        const response = await fetch(`http://localhost:3000/api/getUsers/${decodeJWT().userId}`);
-        const data = await response.json();
-        console.log(data)
-        setRecentChats([...data.rooms]);
-      } catch (error) {
-        console.error("Error fetching recent chats:", error);
-      }
-    };
-
     fetchRecentChats();
   }, []);
 
+  useEffect(() => {
+    socket.on("friendAdded", (data) => {
+      fetchRecentChats();
+    });
+  }, []);
+
+  const fetchRecentChats = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/api/getUsers/${decodeJWT().userId}`
+      );
+      const data = await response.json();
+      console.log(data);
+      setRecentChats([...data.rooms]);
+    } catch (error) {
+      console.error("Error fetching recent chats:", error);
+    }
+  };
   const [timer, setTimer] = useState(null);
   const handleSearch = async (event) => {
     setSearchTerm(event.target.value);
@@ -51,13 +60,12 @@ const ChatDashboard = () => {
   const addFriend = async (friendId) => {
     const senderId = decodeJWT().userId;
 
-
-    console.log(senderId)
-    console.log(friendId)
-    let payload={
-      id:senderId,
-      friendId:friendId
-    }
+    console.log(senderId);
+    console.log(friendId);
+    let payload = {
+      id: senderId,
+      friendId: friendId,
+    };
     try {
       const response = await fetch("http://localhost:3000/api/add-friend", {
         method: "POST",
@@ -102,7 +110,10 @@ const ChatDashboard = () => {
         />
         <ul className="mt-4">
           {searchResults?.users?.map((user) => (
-            <li key={user.username} className="py-2 hover:bg-gray-100 px-3 rounded-md">
+            <li
+              key={user.username}
+              className="py-2 hover:bg-gray-100 px-3 rounded-md"
+            >
               {user.username}
               <button
                 onClick={() => addFriend(user._id)}
@@ -118,9 +129,10 @@ const ChatDashboard = () => {
         <h2 className="text-xl font-bold mb-4">Recent Chats</h2>
         <ul>
           {recentChats?.map((chat) => (
-            <li onClick={()=>{
-              navigate(`/chat/${chat._id}`)
-            }}
+            <li
+              onClick={() => {
+                navigate(`/chat/${chat._id}/${chat.users[0]._id}`);
+              }}
               key={chat.username}
               className="flex items-center py-3 border-b border-gray-200"
             >
@@ -131,9 +143,7 @@ const ChatDashboard = () => {
               /> */}
               <div>
                 <p className="font-medium">{chat.users[0].username}</p>
-                <p className="text-sm text-gray-500">
-                  
-                </p>
+                <p className="text-sm text-gray-500"></p>
               </div>
             </li>
           ))}

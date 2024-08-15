@@ -18,6 +18,7 @@ module.exports = (server) => {
     });
 
     socket.on('message',(data)=>{
+      console.log(data,"from socket")
       chatController.sendMessageToRoom(data)
     })
   });

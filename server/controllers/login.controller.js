@@ -25,7 +25,7 @@ const loginUser = async (req, res) => {
     if (!isValid) {
       return res.status(401).send({ message: 'Invalid username or password' });
     }
-    const token = jwt.sign({ userId: user._id }, "test@123", { expiresIn: '1h' });
+    const token = jwt.sign({ userId: user._id,username:user.username }, "test@123", { expiresIn: '1h' });
     res.status(200).send({ token, username: user.username });
   } catch (error) {
     res.status(500).send({ message: 'Error logging in user' });

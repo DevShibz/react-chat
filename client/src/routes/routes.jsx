@@ -17,7 +17,7 @@ const routes = (isLoggedIn) => [
     element: <RegistrationForm></RegistrationForm>
   },
   {
-    path:'chat/:id',
+    path:'chat/:room_id/:user_id',
     element: <ChatScreen></ChatScreen>
   }
 ];

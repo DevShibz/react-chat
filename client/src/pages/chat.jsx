@@ -10,6 +10,8 @@ const ChatScreen = () => {
   const [messages, setMessages] = useState();
   const [newMessage, setNewMessage] = useState("");
   const [scrollPosition, setScrollPosition] = useState(0);
+  const [chatUsers, setChatUsers] = useState([]);
+  const [currentUser, setCurrentUser] = useState("");
   const params = useParams();
   useEffect(() => {
     const chatBox = document.getElementById("chat-box");
@@ -35,28 +37,27 @@ const ChatScreen = () => {
   const fetchMessages = async () => {
     await axios
       .post(`http://localhost:3000/api/recent-chats`, {
-        roomId: params.id,
+        roomId: params.room_id,
       })
       .then((response) => {
-        console.log(response.data.chats);
-        response.data.chats.forEach((chat) => {
-          if (decodeJWT().userId == chat.sender) {
-            chat.type = "user";
-          } else {
-            chat.type = "other";
-          }
-        });
         setMessages(response.data.chats);
+        setChatUsers(response.data.Users[0].users);
+        setCurrentUser(
+          response.data.Users[0].users.find((x) => x._id !== decodeJWT().userId)
+            .username
+        );
       });
   };
 
   const handleSendMessage = async () => {
+    const sender = chatUsers.find((x) => x._id === decodeJWT().userId);
+    const receiver = chatUsers.find((x) => x._id !== decodeJWT().userId);
     const message = {
-      room: params.id,
+      room: params.room_id,
       message: newMessage,
       type: "text",
-      sender: decodeJWT().userId,
-      receiver: params.id,
+      sender,
+      receiver,
     };
     socket.emit("message", message);
     setNewMessage("");
@@ -72,7 +73,7 @@ const ChatScreen = () => {
         <button className="p-2 text-gray-600 hover:text-gray-900">
           {/* <ChevronLeft size={24} /> */}
         </button>
-        <h2 className="text-lg font-bold">Chat with John Doe</h2>
+        <h2 className="text-lg font-bold">Chat with {currentUser} </h2>
         {/* <MessageCircle size={24} color="blue" /> */}
       </div>
       <div
@@ -83,25 +84,27 @@ const ChatScreen = () => {
           <div
             key={index}
             className={`flex ${
-              message.type === "user" ? "justify-end" : "justify-start"
+              decodeJWT().userId == message.sender._id
+                ? "justify-end"
+                : "justify-start"
             } mb-4`}
           >
             <div className="mr-2">
-              <img
+              {/* <img
                 src={`https://picsum.photos/200/300?random=${index}`}
                 alt="Profile Picture"
                 className="w-8 h-8 rounded-full"
-              />
+              /> */}
             </div>
             <div
               className={`p-2 rounded-lg ${
-                message.type === "user"
+                decodeJWT().userId == message.sender._id
                   ? "bg-blue-500 text-white"
                   : "bg-gray-200"
               }`}
             >
               <span className="font-bold">
-                {message.type === "user" ? "User" : "Other"}
+                {chatUsers.find((x) => x._id === message.sender._id).username}
               </span>
 
               <p>{message.message}</p>

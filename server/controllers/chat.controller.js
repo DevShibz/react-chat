@@ -3,15 +3,40 @@ const User = require('../models/user.model');
 const Room = require('../models/room.model');
 const { io } = require('./socket.controller');
 exports.getRecentChats = async (req, res) => {
-  try{
+  try {
+
     const chats = await Chat.find({ room: req.body.roomId })
+      .populate('sender')
+      .populate('receiver')
+    const Users = await Room.find({ _id: req.body.roomId }).populate('users', 'username');
+
 
     res.status(200).json({
       success: true,
-      chats
+      chats,
+      Users
     });
   }
-  catch(err){
+  catch (err) {
+    console.log(err);
+    res.status(500).json({
+      success: false,
+      error: err.message
+    });
+  }
+};
+
+
+exports.getCurrentUser = async (req, res) => {
+
+  try {
+    const user = await Room.find({ _id: req.params.id }).populate('users');
+
+    res.status(200).json({
+      success: true,
+      user
+    });
+  } catch (err) {
     res.status(500).json({
       success: false,
       error: err.message
@@ -39,6 +64,7 @@ exports.addFriend = async (req, res) => {
       users: [id, friendId]
     });
 
+    global.io.emit('friendAdded', { id, friendId });
 
 
     res.status(200).json({
@@ -56,11 +82,9 @@ exports.addFriend = async (req, res) => {
 exports.searchFriend = async (req, res) => {
   try {
     const { name } = req.query;
-
     const users = await User.find({
       username: { $regex: name, $options: 'i' }
     });
-
     res.status(200).json({
       success: true,
       users
@@ -98,9 +122,11 @@ exports.getAllFriendsByRoomId = async (req, res) => {
 exports.sendMessageToRoom = async (data) => {
   try {
     await Chat.create(data);
+    console.log(data, "from controller")
     global.io.emit('recieveMessage', data);
     return;
   } catch (err) {
+    console.log(err);
     return {
       success: false,
       error: err.message
