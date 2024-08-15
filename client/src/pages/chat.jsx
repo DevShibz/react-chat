@@ -72,26 +72,56 @@ const ChatScreen = () => {
 
   const handleFullScreenImage = (image) => {
     const modal = document.createElement("div");
-    modal.className = "fixed top-0 left-0 w-full h-full bg-black bg-opacity-50";
+    modal.className = "fixed top-0 left-0 w-full h-full bg-black bg-opacity-75 flex items-center justify-center";
     modal.innerHTML = `
-      <div class="absolute top-0 left-0 w-full h-full flex items-center justify-center">
-      <div class="bg-transparent rounded-lg p-4">
-        <img src=${image} alt="uploaded" class="w-full h-full rounded-lg" />
-        <div class="flex justify-end mt-2">
-        <a href=${image} download>
-          <button class="bg-blue-500 hover:bg-blue-700 text-white py-1 px-2 rounded-md">
-          <i class="fa fa-download"></i>
+      <div class="relative  rounded-lg shadow-lg overflow-hidden max-w-3xl w-full">
+        <!-- Ellipsis Button at the Top-Right -->
+        <div class="absolute top-4 right-4">
+          <button class="text-white options-button">
+            <i class="fas fa-ellipsis-v"></i>
           </button>
-        </a>
+          <div class="absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg options-dropdown hidden">
+            <ul class="py-2">
+              <li class="px-4 py-2 hover:bg-gray-200 cursor-pointer">
+                <a href=${image} download>
+                  <i class="fas fa-download mr-2"></i>
+                  Download
+                </a>
+              </li>
+              <li class="px-4 py-2 hover:bg-gray-200 cursor-pointer">
+                <i class="fas fa-share-alt mr-2"></i>
+                Share
+              </li>
+            </ul>
+          </div>
         </div>
-      </div>
+        <!-- Image Content -->
+        <img src=${image} alt="uploaded" class="w-full h-auto rounded-lg" />
       </div>
     `;
-    modal.onclick = () => {
-      modal.remove();
-    };
+  
     document.body.appendChild(modal);
-  }
+  
+    const optionsButton = modal.querySelector(".options-button");
+    const optionsDropdown = modal.querySelector(".options-dropdown");
+    const modalContent = modal.querySelector(".relative");
+  
+    optionsButton.onclick = (e) => {
+      e.stopPropagation(); // Prevent modal click event from triggering
+      optionsDropdown.classList.toggle("hidden");
+    };
+  
+    // Close the modal when clicking outside of the modal content
+    modal.onclick = (e) => {
+      if (!modalContent.contains(e.target)) {
+        modal.remove();
+      }
+    };
+  };
+  
+  
+  
+  
 
   const handleUploadImage = () => {
     const fileInput = document.createElement("input");
