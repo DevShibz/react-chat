@@ -13,13 +13,14 @@ const ChatScreen = () => {
   const [chatUsers, setChatUsers] = useState([]);
   const [currentUser, setCurrentUser] = useState("");
   const params = useParams();
+  const [sender, setSender] = useState();
+  const [receiver, setReceiver] = useState();
+
   useEffect(() => {
     const chatBox = document.getElementById("chat-box");
     setTimeout(() => {
       chatBox.scrollTop = chatBox.scrollHeight;
     }, 500);
-
-    console.log(messages, "messages");
   }, [messages]);
   const [showEmojis, setShowEmojis] = useState(false);
 
@@ -42,6 +43,8 @@ const ChatScreen = () => {
       .then((response) => {
         setMessages(response.data.chats);
         setChatUsers(response.data.Users[0].users);
+        setSender(response.data.Users[0].users.find((x) => x._id === decodeJWT().userId));
+        setReceiver(response.data.Users[0].users.find((x) => x._id !== decodeJWT().userId));
         setCurrentUser(
           response.data.Users[0].users.find((x) => x._id !== decodeJWT().userId)
             .username
@@ -50,15 +53,15 @@ const ChatScreen = () => {
   };
 
   const handleSendMessage = async () => {
-    const sender = chatUsers.find((x) => x._id === decodeJWT().userId);
-    const receiver = chatUsers.find((x) => x._id !== decodeJWT().userId);
-    const message = {
+    
+    let message = {
       room: params.room_id,
       message: newMessage,
       type: "text",
       sender,
       receiver,
     };
+    console.log("message", message);
     socket.emit("message", message);
     setNewMessage("");
   };
@@ -73,8 +76,20 @@ const ChatScreen = () => {
     fileInput.accept = "image/*";
     fileInput.onchange = () => {
       const file = fileInput.files[0];
-      // handle file upload
-      console.log("File selected:", file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result;
+        let message = {
+          room: params.room_id,
+          message: base64String,
+          type: "image",
+          sender,
+          receiver,
+        };
+        
+        socket.emit("message", message);
+      };
+      reader.readAsDataURL(file);
     };
     fileInput.click();
   };
@@ -119,15 +134,21 @@ const ChatScreen = () => {
                 {chatUsers.find((x) => x._id === message.sender._id).username}
               </span>
 
-              <p>{message.message}</p>
+              {message.type=="text" && <p>{message.message}</p>}
+              {message.type=="image" && (
+                <img
+                  src={message.message}
+                  alt="uploaded"
+                  className="w-32 h-32 rounded-lg"
+                />
+              )}
             </div>
           </div>
         ))}
       </div>
       <div className="flex items-center p-4 bg-white rounded-lg shadow-md">
-        <input
+        <textarea
           onKeyPress={(e) => {
-            console.log(e.key);
             if (e.key === "Enter") {
               handleSendMessage();
             }
@@ -159,7 +180,7 @@ const ChatScreen = () => {
           onClick={handleSendMessage}
           className="ml-4 p-2 rounded-lg bg-blue-500 text-white hover:bg-blue-700 focus:outline-none focus:ring focus:border-blue-500"
         >
-          <i className="fas fa-send"></i>
+          <i className="fa fa-paper-plane"></i>
         </button>
       </div>
     </div>
