@@ -23,6 +23,14 @@ class User {
     this.email = email;
   }
 }
+
+class Order {
+  constructor(userId, productName, quantity) {
+    this.userId = userId;
+    this.productName = productName;
+    this.quantity = quantity;
+  }
+}
 // Create a new user document in the database
 async function createUser(user) {
   try {
@@ -33,10 +41,32 @@ async function createUser(user) {
     console.log(err);
   }
 }
+
+// Create a new order document in the database
+async function createOrder(order) {
+  try {
+    const collection = db.collection('orders');
+    const result = await collection.insertOne(order);
+    return result.insertedId;
+  } catch (err) {
+    console.log(err);
+  }
+}
 // Retrieve all user documents from the database
 async function getAllUsers() {
   try {
     const collection = db.collection('users');
+    const result = await collection.find().toArray();
+    return result;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+// Retrieve all order documents from the database
+async function getAllOrders() {
+  try {
+    const collection = db.collection('orders');
     const result = await collection.find().toArray();
     return result;
   } catch (err) {
@@ -55,11 +85,33 @@ async function getUserById(userId) {
   }
 }
 
+// Retrieve an order document by ID
+async function getOrderById(orderId) {
+  try {
+    const collection = db.collection('orders');
+    const result = await collection.findOne({ _id: orderId });
+    return result;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 // Retrieve a user document by email
 async function getUserByEmail(email) {
   try {
     const collection = db.collection('users');
     const result = await collection.findOne({ email: email });
+    return result;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+// Retrieve orders by user ID
+async function getOrdersByUserId(userId) {
+  try {
+    const collection = db.collection('orders');
+    const result = await collection.find({ userId: userId }).toArray();
     return result;
   } catch (err) {
     console.log(err);
@@ -75,11 +127,33 @@ async function updateUser(userId, updates) {
     console.log(err);
   }
 }
+
+// Update an order document in the database
+async function updateOrder(orderId, updates) {
+  try {
+    const collection = db.collection('orders');
+    const result = await collection.updateOne({ _id: orderId }, { $set: updates });
+    return result.modifiedCount;
+  } catch (err) {
+    console.log(err);
+  }
+}
 // Delete a user document from the database
 async function deleteUser(userId) {
   try {
     const collection = db.collection('users');
     const result = await collection.deleteOne({ _id: userId });
+    return result.deletedCount;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+// Delete an order document from the database
+async function deleteOrder(orderId) {
+  try {
+    const collection = db.collection('orders');
+    const result = await collection.deleteOne({ _id: orderId });
     return result.deletedCount;
   } catch (err) {
     console.log(err);
@@ -96,11 +170,45 @@ async function getUserCount() {
   }
 }
 
+// Retrieve the count of order documents in the database
+async function getOrderCount() {
+  try {
+    const collection = db.collection('orders');
+    const result = await collection.countDocuments();
+    return result;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 // Retrieve user documents by name
 async function getUsersByName(name) {
   try {
     const collection = db.collection('users');
     const result = await collection.find({ name: name }).toArray();
+    return result;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+// Retrieve order documents by product name
+async function getOrdersByProductName(productName) {
+  try {
+    const collection = db.collection('orders');
+    const result = await collection.find({ productName: productName }).toArray();
+    return result;
+  } catch (err) {
+    console.log(err);
+  }
+}
+// Aggregate orders by product name
+async function aggregateOrdersByProductName() {
+  try {
+    const collection = db.collection('orders');
+    const result = await collection.aggregate([
+      { $group: { _id: "$productName", count: { $sum: 1 } } }
+    ]).toArray();
     return result;
   } catch (err) {
     console.log(err);
