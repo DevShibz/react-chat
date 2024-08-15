@@ -43,8 +43,12 @@ const ChatScreen = () => {
       .then((response) => {
         setMessages(response.data.chats);
         setChatUsers(response.data.Users[0].users);
-        setSender(response.data.Users[0].users.find((x) => x._id === decodeJWT().userId));
-        setReceiver(response.data.Users[0].users.find((x) => x._id !== decodeJWT().userId));
+        setSender(
+          response.data.Users[0].users.find((x) => x._id === decodeJWT().userId)
+        );
+        setReceiver(
+          response.data.Users[0].users.find((x) => x._id !== decodeJWT().userId)
+        );
         setCurrentUser(
           response.data.Users[0].users.find((x) => x._id !== decodeJWT().userId)
             .username
@@ -53,13 +57,13 @@ const ChatScreen = () => {
   };
 
   const handleSendMessage = async () => {
-    
     let message = {
       room: params.room_id,
       message: newMessage,
       type: "text",
       sender,
       receiver,
+      createdAt: new Date(),
     };
     console.log("message", message);
     socket.emit("message", message);
@@ -72,7 +76,8 @@ const ChatScreen = () => {
 
   const handleFullScreenImage = (image) => {
     const modal = document.createElement("div");
-    modal.className = "fixed top-0 left-0 w-full h-full bg-black bg-opacity-75 flex items-center justify-center";
+    modal.className =
+      "fixed top-0 left-0 w-full h-full bg-black bg-opacity-75 flex items-center justify-center";
     modal.innerHTML = `
       <div class="relative  rounded-lg shadow-lg overflow-hidden max-w-3xl w-full">
         <!-- Ellipsis Button at the Top-Right -->
@@ -99,18 +104,18 @@ const ChatScreen = () => {
         <img src=${image} alt="uploaded" class="w-full h-auto rounded-lg" />
       </div>
     `;
-  
+
     document.body.appendChild(modal);
-  
+
     const optionsButton = modal.querySelector(".options-button");
     const optionsDropdown = modal.querySelector(".options-dropdown");
     const modalContent = modal.querySelector(".relative");
-  
+
     optionsButton.onclick = (e) => {
       e.stopPropagation(); // Prevent modal click event from triggering
       optionsDropdown.classList.toggle("hidden");
     };
-  
+
     // Close the modal when clicking outside of the modal content
     modal.onclick = (e) => {
       if (!modalContent.contains(e.target)) {
@@ -118,10 +123,6 @@ const ChatScreen = () => {
       }
     };
   };
-  
-  
-  
-  
 
   const handleUploadImage = () => {
     const fileInput = document.createElement("input");
@@ -138,8 +139,9 @@ const ChatScreen = () => {
           type: "image",
           sender,
           receiver,
+          createdAt: new Date(),
         };
-        
+
         socket.emit("message", message);
       };
       reader.readAsDataURL(file);
@@ -183,16 +185,22 @@ const ChatScreen = () => {
                   : "bg-gray-200"
               }`}
             >
+              <div className="flex justify-between gap-3">
               <span className="font-bold">
                 {chatUsers.find((x) => x._id === message.sender._id).username}
               </span>
 
-              <span className="text-gray-500 text-sm">
-                {new Date(message.createdAt).toLocaleTimeString().slice(0, 5)}
+              <span className="text-white-500 text-sm ">
+                {new Date(message.createdAt).toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
               </span>
+              </div>
+            
 
-              {message.type=="text" && <p>{message.message}</p>}
-              {message.type=="image" && (
+              {message.type == "text" && <p>{message.message}</p>}
+              {message.type == "image" && (
                 <img
                   src={message.message}
                   alt="uploaded"
