@@ -214,3 +214,91 @@ async function aggregateOrdersByProductName() {
     console.log(err);
   }
 }
+
+// Distinct values of a field in the users collection
+async function distinctUsersField(fieldName) {
+  try {
+    const collection = db.collection('users');
+    const result = await collection.distinct(fieldName);
+    return result;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+// Find a user document using a filter
+async function findUser(filter) {
+  try {
+    const collection = db.collection('users');
+    const result = await collection.findOne(filter);
+    return result;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+// Find multiple user documents using a filter
+async function findUsers(filter) {
+  try {
+    const collection = db.collection('users');
+    const result = await collection.find(filter).toArray();
+    return result;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+// Find and update a user document
+async function findAndUpdateUser(filter, updates) {
+  try {
+    const collection = db.collection('users');
+    const result = await collection.findOneAndUpdate(filter, { $set: updates });
+    return result;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+// Find and delete a user document
+async function findAndDeleteUser(filter) {
+  try {
+    const collection = db.collection('users');
+    const result = await collection.findOneAndDelete(filter);
+    return result;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+// Create an index on a field in the users collection
+async function createIndexOnUsersField(fieldName) {
+  try {
+    const collection = db.collection('users');
+    const result = await collection.createIndex(fieldName);
+    return result;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+// Create a unique index on a field in the users collection
+async function createUniqueIndexOnUsersField(fieldName) {
+  try {
+    const collection = db.collection('users');
+    const result = await collection.createIndex(fieldName, { unique: true });
+    return result;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+// Drop an index on a field in the users collection
+async function dropIndexOnUsersField(fieldName) {
+  try {
+    const collection = db.collection('users');
+    const result = await collection.dropIndex(fieldName);
+    return result;
+  } catch (err) {
+    console.log(err);
+  }
+}
