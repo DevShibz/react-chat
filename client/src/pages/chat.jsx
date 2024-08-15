@@ -67,6 +67,18 @@ const ChatScreen = () => {
     setShowEmojis((prevShowEmojis) => !prevShowEmojis);
   };
 
+  const handleUploadImage = () => {
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = "image/*";
+    fileInput.onchange = () => {
+      const file = fileInput.files[0];
+      // handle file upload
+      console.log("File selected:", file);
+    };
+    fileInput.click();
+  };
+
   return (
     <div className="flex flex-col h-screen p-4 bg-gray-100">
       <div className="flex items-center justify-between mb-4">
@@ -134,17 +146,7 @@ const ChatScreen = () => {
         </button>
         <button
           className="ml-2 bg-blue-500 hover:bg-blue-700 text-white py-1 px-2 rounded-md"
-          onClick={() => {
-            const fileInput = document.createElement('input');
-            fileInput.type = 'file';
-            fileInput.accept = 'image/*';
-            fileInput.onchange = () => {
-              const file = fileInput.files[0];
-              // handle file upload
-              console.log('File selected:', file);
-            };
-            fileInput.click();
-          }}
+          onClick={handleUploadImage}
         >
           <i className="fa fa-image"></i>
         </button>
