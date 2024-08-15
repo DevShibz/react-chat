@@ -187,6 +187,10 @@ const ChatScreen = () => {
                 {chatUsers.find((x) => x._id === message.sender._id).username}
               </span>
 
+              <span className="text-gray-500 text-sm">
+                {new Date(message.createdAt).toLocaleTimeString().slice(0, 5)}
+              </span>
+
               {message.type=="text" && <p>{message.message}</p>}
               {message.type=="image" && (
                 <img
