@@ -135,8 +135,15 @@ const ChatScreen = () => {
         <button
           className="ml-2 bg-blue-500 hover:bg-blue-700 text-white py-1 px-2 rounded-md"
           onClick={() => {
-            // show action sheet with options to select image from device
-            console.log("Button clicked!");
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = 'image/*';
+            fileInput.onchange = () => {
+              const file = fileInput.files[0];
+              // handle file upload
+              console.log('File selected:', file);
+            };
+            fileInput.click();
           }}
         >
           <i className="fa fa-image"></i>
