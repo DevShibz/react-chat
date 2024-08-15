@@ -160,9 +160,22 @@ const ChatDashboard = () => {
         <h2 className="text-xl font-bold mb-4">Recent Chats</h2>
         <ul>
         {recentChats?.map((chat) =>  (
-            <li onClick={() => {
-              navigate(`/chat/${chat._id}/${chat.users[0]._id}`);
-            }}  className="bg-white p-4 shadow-md mb-4 rounded-lg flex items-center">
+            <li 
+              onClick={() => {
+                navigate(`/chat/${chat._id}/${chat.users[0]._id}`);
+              }}  
+              className="bg-white p-4 shadow-md mb-4 rounded-lg flex items-center relative"
+              onMouseDown={(e) => {
+                e.preventDefault();
+                const startTime = new Date().getTime();
+                const timer = setTimeout(() => {
+                  if (new Date().getTime() - startTime > 120000) {
+                    // show options to select message
+                    console.log("Long press detected!");
+                  }
+                }, 2000);
+              }}
+            >
               {/* <img
                 src={friend.profilePicture}
                 alt={friend.name}
