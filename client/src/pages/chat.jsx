@@ -159,7 +159,7 @@ const ChatScreen = () => {
           onClick={handleSendMessage}
           className="ml-4 p-2 rounded-lg bg-blue-500 text-white hover:bg-blue-700 focus:outline-none focus:ring focus:border-blue-500"
         >
-          {/* <Send size={18} color="white" /> */}
+          <i className="fa fa-send"></i>
         </button>
       </div>
     </div>
