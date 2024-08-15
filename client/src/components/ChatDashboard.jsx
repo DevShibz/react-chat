@@ -16,6 +16,7 @@ const ChatDashboard = () => {
 
   useEffect(() => {
     socket.on("friendAdded", (data) => {
+      console.log(data,"friendAdded");
       fetchRecentChats();
     });
   }, []);
