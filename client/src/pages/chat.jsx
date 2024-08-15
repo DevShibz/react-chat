@@ -132,6 +132,15 @@ const ChatScreen = () => {
         >
           {/* <Smile size={24} /> */}
         </button>
+        <button
+          className="ml-2 bg-blue-500 hover:bg-blue-700 text-white py-1 px-2 rounded-md"
+          onClick={() => {
+            // show action sheet with options to select image from device
+            console.log("Button clicked!");
+          }}
+        >
+          Select Image
+        </button>
         {showEmojis && (
           <div className="absolute bottom-0 left-0 p-2 bg-gray-200 border border-gray-300 rounded-lg">
             🙂 😊 👍 😄 😆
