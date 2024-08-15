@@ -140,6 +140,7 @@ const ChatScreen = () => {
                   src={message.message}
                   alt="uploaded"
                   className="w-32 h-32 rounded-lg"
+                  onClick={() => handleFullScreenImage(message.message)}
                 />
               )}
             </div>
