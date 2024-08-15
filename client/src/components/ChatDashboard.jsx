@@ -9,6 +9,7 @@ const ChatDashboard = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
   const navigate = useNavigate();
+  const [showProfile, setShowProfile] = useState(false);
   useEffect(() => {
     fetchRecentChats();
   }, []);
@@ -83,7 +84,7 @@ const ChatDashboard = () => {
   };
 
   const decodeJWT = () => {
-    const token = sessionStorage.getItem("token");
+    const token = localStorage.getItem("token");
     if (!token) {
       return null;
     }
@@ -98,19 +99,48 @@ const ChatDashboard = () => {
   };
 
   return (
-    <div className="bg-gray-100 h-screen flex flex-col md:flex-row">
-      <div className="w-full md:w-1/4 bg-white shadow-md rounded-lg p-4">
-        <h2 className="text-xl font-bold mb-4">Search Users</h2>
-        <input
-          type="text"
-          placeholder="Search users..."
-          value={searchTerm}
-          onChange={handleSearch}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <ul className="mt-4">
-          {searchResults?.users?.map((user) => (
-            <li
+    <div className="h-screen bg-gray-100">
+      <header className="bg-white py-4 shadow-md">
+        <div className="container mx-auto ">
+         
+          <div className="flex m-auto w-[98%] justify-between gap-2">
+            {/* <Search
+              size={24}
+              color="gray"
+              className="mr-4"
+            /> */}
+            <input
+              type="search"
+              value={searchTerm}
+              onChange={handleSearch}
+              placeholder="Search friends"
+              className="py-2 pl-10 text-sm text-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-600 w-full"
+            />
+            <div className="flex gap-2">
+            <h2 className="text-lg font-bold">{decodeJWT().username}</h2>
+            <img
+              src="https://picsum.photos/200/300"
+             
+              className="w-8 h-8 rounded-full ml-4 cursor-pointer"
+              onClick={() => setShowProfile(!showProfile)}
+            />
+            </div>
+             
+            {showProfile && (
+              <div
+                className="absolute top-16 right-4 bg-white shadow-md p-4 rounded-lg"
+                onClick={() => setShowProfile(false)}
+              >
+                <h2 className="text-lg font-bold">{decodeJWT().username}</h2>
+                <p className="text-sm">Settings</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </header>
+      {searchResults?.users?.length> 0 && <div className="fixed w-full top-18 bg-white h-14 p-2">
+      {searchResults?.users?.map((user) => (
+            <div
               key={user.username}
               className="py-2 hover:bg-gray-100 px-3 rounded-md"
             >
@@ -121,34 +151,31 @@ const ChatDashboard = () => {
               >
                 Add
               </button>
-            </li>
+            </div>
           ))}
-        </ul>
-      </div>
-      <div className="w-full md:w-3/4 ml-4 bg-white shadow-md rounded-lg p-4 overflow-y-auto">
+      </div>}
+      
+      <main className="container mx-auto p-4 mt-4">
         <h2 className="text-xl font-bold mb-4">Recent Chats</h2>
         <ul>
-          {recentChats?.map((chat) => (
-            <li
-              onClick={() => {
-                navigate(`/chat/${chat._id}/${chat.users[0]._id}`);
-              }}
-              key={chat.username}
-              className="flex items-center py-3 border-b border-gray-200"
-            >
+        {recentChats?.map((chat) =>  (
+            <li onClick={() => {
+              navigate(`/chat/${chat._id}/${chat.users[0]._id}`);
+            }}  className="bg-white p-4 shadow-md mb-4 rounded-lg flex items-center">
               {/* <img
-                src={chat.profilePicture}
-                alt={chat.username}
-                className="w-8 h-8 rounded-full mr-3"
+                src={friend.profilePicture}
+                alt={friend.name}
+                className="w-12 h-12 rounded-full mr-4"
               /> */}
-              <div>
-                <p className="font-medium">{chat.users[0].username}</p>
-                <p className="text-sm text-gray-500"></p>
+              <div className="flex-1">
+                <h3 className="text-lg font-bold">{chat.users[0].username}</h3>
+               
               </div>
+           
             </li>
           ))}
         </ul>
-      </div>
+      </main>
     </div>
   );
 };

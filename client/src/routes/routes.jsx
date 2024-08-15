@@ -6,7 +6,7 @@ import React, { useState } from "react";
 const routes = (isLoggedIn) => [
   {
     path: "/",
-    element: <><ChatDashboard></ChatDashboard></>,
+    element: isLoggedIn ? <ChatDashboard></ChatDashboard> : <LoginForm></LoginForm>
   },
   {
     path:'/login',

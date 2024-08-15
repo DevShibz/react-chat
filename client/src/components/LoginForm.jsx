@@ -22,9 +22,9 @@ const LoginForm = () => {
         const data = await response.json();
         // Store token in session storage with expiry
     
-        sessionStorage.setItem('token', data.token);
+        localStorage.setItem('token', data.token);
         // Redirect to chat or desired page
-        navigate("/chat")
+        navigate("/")
       } else {
         const errorData = await response.json();
         setErrorMessage(errorData.message || 'Invalid credentials');
