@@ -70,6 +70,22 @@ const ChatScreen = () => {
     setShowEmojis((prevShowEmojis) => !prevShowEmojis);
   };
 
+  const handleFullScreenImage = (image) => {
+    const modal = document.createElement("div");
+    modal.className = "fixed top-0 left-0 w-full h-full bg-black bg-opacity-50";
+    modal.innerHTML = `
+      <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+      <div class="bg-white rounded-lg">
+        <img src=${image} alt="uploaded" class="w-64 h-64 rounded-lg" />
+      </div>
+      </div>
+    `;
+    modal.onclick = () => {
+      modal.remove();
+    };
+    document.body.appendChild(modal);
+  }
+
   const handleUploadImage = () => {
     const fileInput = document.createElement("input");
     fileInput.type = "file";
