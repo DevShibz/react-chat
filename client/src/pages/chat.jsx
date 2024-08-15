@@ -139,7 +139,7 @@ const ChatScreen = () => {
             console.log("Button clicked!");
           }}
         >
-          Select Image
+          <i className="fa fa-image"></i>
         </button>
         {showEmojis && (
           <div className="absolute bottom-0 left-0 p-2 bg-gray-200 border border-gray-300 rounded-lg">
