@@ -15,4 +15,5 @@ router.post('/sendMessageToRoom', chatController.sendMessageToRoom);
 router.post('/add-friend', chatController.addFriend);
 router.get('/searchFriend', chatController.searchFriend);
 router.post('/getCurrentUsers/:id', chatController.getCurrentUser);
+router.post('/sendMessage', chatController.sendMessageToQue);
 module.exports = router;

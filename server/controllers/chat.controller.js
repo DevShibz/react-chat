@@ -2,6 +2,7 @@ const Chat = require('../models/chat.model');
 const User = require('../models/user.model');
 const Room = require('../models/room.model');
 const { io } = require('./socket.controller');
+const publishMessage = require('../mq/publisher');
 exports.getRecentChats = async (req, res) => {
   try {
 
@@ -96,6 +97,22 @@ exports.searchFriend = async (req, res) => {
     });
   }
 };
+
+exports.sendMessageToQue = async (req, res) => {
+  try{
+      await publishMessage('chat', JSON.stringify(req.body));
+      res.status(200).json({
+        success: true,
+        message: 'Message sent to queue'
+      });
+  }
+  catch(err){
+    res.status(500).json({
+      success: false,
+      error: err.message
+    });
+  }
+}
 
 exports.getAllFriendsByRoomId = async (req, res) => {
   try {
