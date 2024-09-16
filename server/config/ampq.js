@@ -5,7 +5,7 @@ let channel, connection;
 async function connectRabbitMQ() {
   try {
     // Replace with your RabbitMQ server URL
-    connection = await amqp.connect('amqp://localhost:8087');
+    connection = await amqp.connect('amqp://localhost:5672');
     channel = await connection.createChannel();
     console.log('Connected to RabbitMQ');
   } catch (error) {

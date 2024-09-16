@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
+import { fetchApi } from "../utils/utils";
+import { SEARCH_FRIENDS } from "../utils/api";
 
 const socket = io.connect("http://localhost:3000");
 const ChatDashboard = () => {
@@ -16,7 +18,7 @@ const ChatDashboard = () => {
 
   useEffect(() => {
     socket.on("friendAdded", (data) => {
-      console.log(data,"friendAdded");
+      console.log(data, "friendAdded");
       fetchRecentChats();
     });
   }, []);
@@ -44,11 +46,7 @@ const ChatDashboard = () => {
       setTimeout(async () => {
         if (event.target.value.length > 0) {
           try {
-            const response = await fetch(
-              `http://localhost:3000/api/searchFriend?name=${event.target.value}`
-            );
-            const data = await response.json();
-            setSearchResults(data);
+            setSearchResults(response);
           } catch (error) {
             console.error("Error searching users:", error);
           }
@@ -96,6 +94,7 @@ const ChatDashboard = () => {
     }
 
     const payload = JSON.parse(atob(parts[1]));
+    console.log(payload);
     return payload;
   };
 
@@ -103,7 +102,6 @@ const ChatDashboard = () => {
     <div className="h-screen bg-gray-100">
       <header className="bg-white py-4 shadow-md">
         <div className="container mx-auto ">
-         
           <div className="flex m-auto w-[98%] justify-between gap-2">
             {/* <Search
               size={24}
@@ -118,15 +116,14 @@ const ChatDashboard = () => {
               className="py-2 pl-10 text-sm text-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-600 w-full"
             />
             <div className="flex gap-2">
-            <h2 className="text-lg font-bold">{decodeJWT().username}</h2>
-            <img
-              src="https://picsum.photos/200/300"
-             
-              className="w-8 h-8 rounded-full ml-4 cursor-pointer"
-              onClick={() => setShowProfile(!showProfile)}
-            />
+              <h2 className="text-lg font-bold">{decodeJWT().username}</h2>
+              <img
+                src="https://picsum.photos/200/300"
+                className="w-8 h-8 rounded-full ml-4 cursor-pointer"
+                onClick={() => setShowProfile(!showProfile)}
+              />
             </div>
-             
+
             {showProfile && (
               <div
                 className="absolute top-16 right-4 bg-white shadow-md p-4 rounded-lg"
@@ -139,8 +136,9 @@ const ChatDashboard = () => {
           </div>
         </div>
       </header>
-      {searchResults?.users?.length> 0 && <div className="fixed w-full top-18 bg-white h-14 p-2">
-      {searchResults?.users?.map((user) => (
+      {searchResults?.users?.length > 0 && (
+        <div className="fixed w-full top-18 bg-white h-14 p-2">
+          {searchResults?.users?.map((user) => (
             <div
               key={user.username}
               className="py-2 hover:bg-gray-100 px-3 rounded-md"
@@ -154,16 +152,17 @@ const ChatDashboard = () => {
               </button>
             </div>
           ))}
-      </div>}
-      
+        </div>
+      )}
+
       <main className="container mx-auto p-4 mt-4">
         <h2 className="text-xl font-bold mb-4">Recent Chats</h2>
         <ul>
-        {recentChats?.map((chat) =>  (
-            <li 
+          {recentChats?.map((chat) => (
+            <li
               onClick={() => {
                 navigate(`/chat/${chat._id}/${chat.users[0]._id}`);
-              }}  
+              }}
               className="bg-white p-4 shadow-md mb-4 rounded-lg flex items-center relative"
               onMouseDown={(e) => {
                 e.preventDefault();
@@ -183,9 +182,7 @@ const ChatDashboard = () => {
               /> */}
               <div className="flex-1">
                 <h3 className="text-lg font-bold">{chat.users[0].username}</h3>
-               
               </div>
-           
             </li>
           ))}
         </ul>

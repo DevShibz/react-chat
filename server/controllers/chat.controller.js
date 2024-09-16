@@ -3,6 +3,7 @@ const User = require('../models/user.model');
 const Room = require('../models/room.model');
 const { io } = require('./socket.controller');
 const publishMessage = require('../mq/publisher');
+const { decodeJWT } = require('../utils');
 exports.getRecentChats = async (req, res) => {
   try {
 
@@ -83,9 +84,12 @@ exports.addFriend = async (req, res) => {
 exports.searchFriend = async (req, res) => {
   try {
     const { name } = req.query;
-    const users = await User.find({
+
+    console.log(res.locals.user, "user_info")
+    const final = await User.find({
       username: { $regex: name, $options: 'i' }
     });
+    const users = final.filter(user => user._id != res.locals.user.userId);
     res.status(200).json({
       success: true,
       users

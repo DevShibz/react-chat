@@ -8,7 +8,9 @@ const registerUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = new User({ username, email, password: hashedPassword });
     await user.save();
-    res.status(201).send({ message: 'User created successfully' });
+    const token = jwt.sign({ userId: user._id, username: user.username }, "test@123", { expiresIn: '1h' });
+
+    res.status(201).send({ message: 'User created successfully',token });
   } catch (error) {
     res.status(500).send({ message: 'Error creating user' });
   }
@@ -19,16 +21,17 @@ const loginUser = async (req, res) => {
     const { username, password } = req.body;
     const user = await User.findOne({ username });
     if (!user) {
-      return res.status(401).send({ message: 'Invalid username or password' });
+      throw { message: 'Invalid username or password', status: 401 };
     }
     const isValid = await bcrypt.compare(password, user.password);
     if (!isValid) {
-      return res.status(401).send({ message: 'Invalid username or password' });
+      throw { message: 'Invalid username or password', status: 401 };
     }
-    const token = jwt.sign({ userId: user._id,username:user.username }, "test@123", { expiresIn: '1h' });
+    const token = jwt.sign({ userId: user._id, username: user.username }, "test@123", { expiresIn: '1h' });
     res.status(200).send({ token, username: user.username });
   } catch (error) {
-    res.status(500).send({ message: 'Error logging in user' });
+    console.log(error,"catchblock");
+    res.status(error.status || 500).send({ status:error.status || 500,message: error.message || 'Error logging in user' });
   }
 };
 

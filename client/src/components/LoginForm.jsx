@@ -1,37 +1,27 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { fetchApi } from "../utils/utils";
+import { LOGIN } from "../utils/api";
 
 const LoginForm = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
-  const navigate=useNavigate()
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:3000/api/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username:email, password:password }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        // Store token in session storage with expiry
-    
-        localStorage.setItem('token', data.token);
-        // Redirect to chat or desired page
-        navigate("/")
-      } else {
-        const errorData = await response.json();
-        setErrorMessage(errorData.message || 'Invalid credentials');
+      const response = await fetchApi(
+        LOGIN({ username: email, password: password })
+      );
+      console.log(response);
+      if(response.token){
+        localStorage.setItem("token", response.token);
+        navigate("/");
       }
     } catch (error) {
-      console.log(error)
-      setErrorMessage('An error occurred. Please try again later.');
+      setErrorMessage("An error occurred. Please try again later.");
     }
   };
 
@@ -39,10 +29,15 @@ const LoginForm = () => {
     <div className="flex min-h-screen items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-md w-4/5 md:w-96">
         <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
-        {errorMessage && <div className="text-red-500 mb-4">{errorMessage}</div>}
+        {errorMessage && (
+          <div className="text-red-500 mb-4">{errorMessage}</div>
+        )}
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label htmlFor="email" className="block text-gray-700 font-bold mb-2">
+            <label
+              htmlFor="email"
+              className="block text-gray-700 font-bold mb-2"
+            >
               Email
             </label>
             <input
@@ -55,7 +50,10 @@ const LoginForm = () => {
             />
           </div>
           <div className="mb-4">
-            <label htmlFor="password" className="block text-gray-700 font-bold mb-2">
+            <label
+              htmlFor="password"
+              className="block text-gray-700 font-bold mb-2"
+            >
               Password
             </label>
             <input

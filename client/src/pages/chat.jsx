@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 // import { MessageCircle, Send, Smile, ChevronLeft } from 'lucide-react';
 import { io } from "socket.io-client";
-import { decodeJWT } from "../utils/utils";
+import { decodeJWT, fetchApi } from "../utils/utils";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import "./chat.css";
+import User from "../utils/user";
+import { FETCH_CHAT } from "../utils/api";
 const socket = io.connect("http://localhost:3000");
 const ChatScreen = () => {
   const [messages, setMessages] = useState();
@@ -15,7 +17,7 @@ const ChatScreen = () => {
   const params = useParams();
   const [sender, setSender] = useState();
   const [receiver, setReceiver] = useState();
-
+  const user = new User();
   useEffect(() => {
     const chatBox = document.getElementById("chat-box");
     setTimeout(() => {
@@ -26,6 +28,7 @@ const ChatScreen = () => {
 
   useEffect(() => {
     fetchMessages();
+    console.log(user, "user");
   }, []);
 
   useEffect(() => {
@@ -36,24 +39,20 @@ const ChatScreen = () => {
   }, [socket]);
 
   const fetchMessages = async () => {
-    await axios
-      .post(`http://localhost:3000/api/recent-chats`, {
-        roomId: params.room_id,
-      })
-      .then((response) => {
-        setMessages(response.data.chats);
-        setChatUsers(response.data.Users[0].users);
-        setSender(
-          response.data.Users[0].users.find((x) => x._id === decodeJWT().userId)
-        );
-        setReceiver(
-          response.data.Users[0].users.find((x) => x._id !== decodeJWT().userId)
-        );
-        setCurrentUser(
-          response.data.Users[0].users.find((x) => x._id !== decodeJWT().userId)
-            .username
-        );
-      });
+    try {
+      const data = await fetchApi(FETCH_CHAT(params.room_id));
+      setDetails(data);
+    } catch (err) {}
+  };
+
+  const setDetails = async (data) => {
+    setMessages(data.chats);
+    setChatUsers(data.Users[0].users);
+    setSender(data.Users[0].users.find((x) => x._id === decodeJWT().userId));
+    setReceiver(data.Users[0].users.find((x) => x._id !== decodeJWT().userId));
+    setCurrentUser(
+      data.Users[0].users.find((x) => x._id !== decodeJWT().userId).username
+    );
   };
 
   const handleSendMessage = async () => {
@@ -186,18 +185,17 @@ const ChatScreen = () => {
               }`}
             >
               <div className="flex justify-between gap-3">
-              <span className="font-bold">
-                {chatUsers.find((x) => x._id === message.sender._id).username}
-              </span>
+                <span className="font-bold">
+                  {chatUsers.find((x) => x._id === message.sender._id).username}
+                </span>
 
-              <span className="text-white-500 text-sm ">
-                {new Date(message.createdAt).toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </span>
+                <span className="text-white-500 text-sm ">
+                  {new Date(message.createdAt).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </span>
               </div>
-            
 
               {message.type == "text" && <p>{message.message}</p>}
               {message.type == "image" && (

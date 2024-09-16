@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { REGISTER } from '../utils/api';
+import { fetchApi } from '../utils/utils';
+import { useNavigate } from 'react-router-dom';
 
 const RegistrationForm = () => {
   const [username, setUsername] = useState('');
@@ -6,7 +9,7 @@ const RegistrationForm = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-
+  const navigate=useNavigate()
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -15,24 +18,18 @@ const RegistrationForm = () => {
       return;
     }
 
-    try {
-      const response = await fetch('http://localhost:3000/api/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, email, password }),
-      });
-
-      if (response.ok) {
-        // Redirect to login or desired page
-        window.location.href = '/login'; 
-      } else {
-        const errorData = await response.json();
-        setErrorMessage(errorData.message || 'Registration failed');
+       try {
+      const response = await fetchApi(
+        REGISTER({ username, email, password })
+      );
+      console.log(response);
+      if (response.message=="User created successfully") {
+        localStorage.setItem("token", response.token);
+        navigate("/");
       }
     } catch (error) {
-      setErrorMessage('An error occurred. Please try again later.');
+      console.error(error);
+      setErrorMessage("An error occurred. Please try again later.");
     }
   };
 
